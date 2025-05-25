@@ -6,7 +6,7 @@ services:
       - .env
     command: /bin/sh -c "npm install nodemailer && npm install && npm audit fix --force && npx nodemon src/app.js"
     ports:
-      - '32543:3000'
+      - '443:3000'
     volumes:
       - ./src:/src
     depends_on:
