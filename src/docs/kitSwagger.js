@@ -8,13 +8,14 @@
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  *   schemas:
  *     Kit:
  *       type: object
- *       required:
- *         - name
- *         - description
- *         - price
  *       properties:
  *         id:
  *           type: integer
@@ -24,6 +25,13 @@
  *           type: string
  *         price:
  *           type: number
+ *         stock:
+ *           type: integer
+ *         category:
+ *           type: string
+ *         image:
+ *           type: string
+ *           format: binary
  */
 
 /**
@@ -37,9 +45,34 @@
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/Kit'
+ *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *               - price
+ *               - image
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Kit de réparation souris
+ *               description:
+ *                 type: string
+ *                 example: Pour écran cassé
+ *               price:
+ *                 type: number
+ *                 example: 49.99
+ *               stock:
+ *                 type: integer
+ *                 example: 4
+ *               category:
+ *                 type: string
+ *                 example: smartphone
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Image du kit à uploader
  *     responses:
  *       201:
  *         description: Kit créé avec succès
@@ -101,6 +134,12 @@
  *                 type: string
  *               price:
  *                 type: number
+ *               stock:
+ *                 type: integer
+ *               category:
+ *                 type: string
+ *               image:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Kit mis à jour
@@ -128,11 +167,4 @@
  *         description: Kit non trouvé
  *       500:
  *         description: Erreur serveur
-
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
  */
