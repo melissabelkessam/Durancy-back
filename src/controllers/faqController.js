@@ -2,7 +2,7 @@
 const Faq = require('../models/Faq');
 
 class FaqController {
-  // 🔓 1. Voir toutes les questions
+  // vvoir toutes les questions
   async getAll(req, res) {
     try {
       const faqs = await Faq.findAll({ order: [['createdAt', 'DESC']] });
@@ -12,7 +12,7 @@ class FaqController {
     }
   }
 
-  // 🔐 2. Admin crée une nouvelle question + réponse
+  //creer une nouvelle question + réponse par l'admin no more 
   async create(req, res) {
     try {
       const { question, answer } = req.body;
@@ -27,7 +27,7 @@ class FaqController {
     }
   }
 
-  // 🔐 3. Admin modifie la réponse d'une FAQ
+  // modifier la réponse dune FAQ
   async update(req, res) {
     try {
       const { id } = req.params;
@@ -45,7 +45,7 @@ class FaqController {
     }
   }
 
-  // 🔐 4. Admin supprime une question
+  //supprimer une question
   async delete(req, res) {
     try {
       const { id } = req.params;

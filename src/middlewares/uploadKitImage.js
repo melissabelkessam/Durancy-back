@@ -3,11 +3,11 @@ const path = require('path');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/kits'); // 🔥 c’est ici qu’on enregistre les images
+    cb(null, 'uploads/kits'); 
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
-    cb(null, Date.now() + '-kit' + ext); // nom unique
+    cb(null, Date.now() + '-kit' + ext); 
   }
 });
 

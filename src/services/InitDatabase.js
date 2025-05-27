@@ -1,4 +1,4 @@
-const db = require('../models'); // Importe tous les modèles avec les associations
+const db = require('../models'); 
 
 let tablesAlreadySynced = false;
 
@@ -11,7 +11,7 @@ async function createTables() {
     await db.Order.sync();
     await db.OrderKit.sync();
     await db.Cart.sync();
-    await db.Tutorial.sync(); // la relation avec Kit est maintenant bien définie
+    await db.Tutorial.sync();
     await db.Review.sync();
     await db.Faq.sync();
     await db.CartKit.sync();

@@ -22,7 +22,7 @@ class UserController {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // ✅ Si une image est envoyée, on enregistre son URL
+      // Si une image est envoyée, on enregistre son URL
       let profile_pic = null;
       if (req.file) {
         profile_pic = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
@@ -188,7 +188,7 @@ async updateMe(req, res) {
       if (!user) return res.status(404).json({ error: "Utilisateur non trouvé" });
 
       // Générer mot de passe temporaire
-      const tempPassword = Math.random().toString(36).slice(-10); // ex: "x7e9k2mpa4"
+      const tempPassword = Math.random().toString(36).slice(-10); 
       const hashed = await bcrypt.hash(tempPassword, 10);
 
       // Mise à jour en BDD

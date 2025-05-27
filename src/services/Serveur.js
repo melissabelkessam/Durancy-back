@@ -21,7 +21,6 @@ class Server {
   }
 
   setupMiddleware() {
-    // ✅ Active le CORS pour autoriser les appels depuis le front
     this.app.use(cors({
        origin: ['https://durancy.fr', 'http://localhost:3000'],
       credentials: true
@@ -29,15 +28,15 @@ class Server {
 
     this.app.use(express.json());
 
-    // Sert les fichiers statiques depuis /uploads
+
     this.app.use('/uploads', express.static('uploads'));
 
-    // Page de test
+    
     this.app.get('/', (req, res) => {
       res.status(520).send('oopsie');
     });
 
-    // Swagger
+   
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   }
 

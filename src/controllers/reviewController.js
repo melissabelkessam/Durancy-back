@@ -3,7 +3,7 @@ const Tutorial = require('../models/Tutorial');
 const User = require('../models/User');
 
 class ReviewController {
-  // Créer un avis
+  // Créer un avis par userrr
   async create(req, res) {
     try {
       const { tutorial_id, content, rating } = req.body;
@@ -13,7 +13,7 @@ class ReviewController {
         return res.status(400).json({ error: "ID du tuto et note obligatoires." });
       }
 
-      // Vérifie que le tuto existe
+      // t verify si le tuto existe
       const tutorial = await Tutorial.findByPk(tutorial_id);
       if (!tutorial) return res.status(404).json({ error: "Tutoriel introuvable." });
 
@@ -25,7 +25,7 @@ class ReviewController {
     }
   }
 
-  // Voir les avis d’un tuto
+  // voir les avis dun tuto
   async getByTutorial(req, res) {
     try {
       const { tutorial_id } = req.params;
@@ -40,7 +40,7 @@ class ReviewController {
     }
   }
 
-  // Voir tous les avis (admin)
+  // voir tous les avis (admin)
   async getAll(req, res) {
     try {
       const reviews = await Review.findAll({
@@ -56,7 +56,7 @@ class ReviewController {
     }
   }
 
-  // 4Supprimer un avis (admin)
+  // Supprimer un avis (admin)
   async delete(req, res) {
     try {
       const { id } = req.params;
@@ -70,7 +70,7 @@ class ReviewController {
     }
   }
 
-  // 5️⃣ Voir les meilleurs avis (optionnel)
+  // Voir les meilleurs avis
   async getBest(req, res) {
     try {
       const reviews = await Review.findAll({
