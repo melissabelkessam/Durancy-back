@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Partner = require('../models/Partner');
 const sendMail = require('../utils/mailer');
+const isStrongPassword = require('../utils/passwordValidator');
 
 class UserController {
   async register(req, res) {
@@ -17,12 +18,17 @@ class UserController {
       if (!username) return res.status(400).json({ error: 'Le nom d’utilisateur est obligatoire.' });
       if (role === 'client' && (!firstname || !lastname)) return res.status(400).json({ error: 'Nom et prénom obligatoires pour les clients.' });
 
+      if (!isStrongPassword(password)) {
+        return res.status(400).json({
+          error: "Le mot de passe doit contenir au minimum 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial."
+        });
+      }
+
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) return res.status(400).json({ error: 'Cet email est déjà utilisé.' });
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Si une image est envoyée, on enregistre son URL
       let profile_pic = null;
       if (req.file) {
         profile_pic = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
@@ -50,11 +56,13 @@ class UserController {
         });
       }
 
-      res.status(201).json({ message: 'Compte créé avec succès', user: newUser });
+      const { password: _, ...userWithoutPassword } = newUser.toJSON();
+      res.status(201).json({ message: 'Compte créé avec succès', user: userWithoutPassword });
     } catch (error) {
       res.status(500).json({ error: 'Erreur serveur : ' + error.message });
     }
   }
+
   async login(req, res) {
     try {
       const { email, password } = req.body;
@@ -115,7 +123,14 @@ class UserController {
       }
 
       if (profile_pic) user.profile_pic = profile_pic;
-      if (password) user.password = await bcrypt.hash(password, 10);
+      if (password) {
+        if (!isStrongPassword(password)) {
+          return res.status(400).json({
+            error: "Le mot de passe doit contenir au minimum 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial."
+          });
+        }
+        user.password = await bcrypt.hash(password, 10);
+      }
 
       await user.save();
       res.status(200).json({ message: 'Compte mis à jour avec succès.', user });
@@ -143,29 +158,35 @@ class UserController {
     }
   }
 
-async updateMe(req, res) {
-  try {
-    const user = await User.findByPk(req.user.id);
-    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+  async updateMe(req, res) {
+    try {
+      const user = await User.findByPk(req.user.id);
+      if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé.' });
 
-    const { firstname, lastname, email, password, profile_pic } = req.body;
+      const { firstname, lastname, email, password, profile_pic } = req.body;
 
-    if (user.role === 'client') {
-      if (firstname) user.firstname = firstname;
-      if (lastname) user.lastname = lastname;
-      if (email) user.email = email;
+      if (user.role === 'client') {
+        if (firstname) user.firstname = firstname;
+        if (lastname) user.lastname = lastname;
+        if (email) user.email = email;
+      }
+
+      if (profile_pic) user.profile_pic = profile_pic;
+      if (password) {
+        if (!isStrongPassword(password)) {
+          return res.status(400).json({
+            error: "Le mot de passe doit contenir au minimum 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial."
+          });
+        }
+        user.password = await bcrypt.hash(password, 10);
+      }
+
+      await user.save();
+      res.status(200).json({ message: 'Compte mis à jour avec succès.', user });
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la mise à jour : ' + error.message });
     }
-
-    if (profile_pic) user.profile_pic = profile_pic;
-    if (password) user.password = await bcrypt.hash(password, 10);
-
-    await user.save();
-    res.status(200).json({ message: 'Compte mis à jour avec succès.', user });
-  } catch (error) {
-    res.status(500).json({ error: 'Erreur lors de la mise à jour : ' + error.message });
   }
-}
-
 
   async deleteMe(req, res) {
     try {
@@ -177,25 +198,25 @@ async updateMe(req, res) {
       res.status(500).json({ error: 'Erreur lors de la suppression : ' + error.message });
     }
   }
-  
+
   async forgotPassword(req, res) {
     try {
       const { email } = req.body;
-
       if (!email) return res.status(400).json({ error: "Email requis" });
 
       const user = await User.findOne({ where: { email } });
       if (!user) return res.status(404).json({ error: "Utilisateur non trouvé" });
 
-      // Générer mot de passe temporaire
-      const tempPassword = Math.random().toString(36).slice(-10); 
-      const hashed = await bcrypt.hash(tempPassword, 10);
+      // Générer mot de passe temporaire sécurisé
+      let tempPassword;
+      do {
+        tempPassword = Math.random().toString(36).slice(-10);
+      } while (!isStrongPassword(tempPassword));
 
-      // Mise à jour en BDD
+      const hashed = await bcrypt.hash(tempPassword, 10);
       user.password = hashed;
       await user.save();
 
-      // Envoi du mail
       await sendMail(
         email,
         "Nouveau mot de passe temporaire - Durancy",
