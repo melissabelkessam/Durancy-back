@@ -67,6 +67,18 @@ services:
       PMA_ARBITRARY: 1
     networks:
       - app-network
+  test:
+    image: node:lts-slim
+    working_dir: /src
+    environment:
+      - NODE_ENV=test
+    command: /bin/sh -c "npm install --save-dev jest && npm install && npm run test"
+    volumes:
+      - ./src:/src
+    networks:
+      - app-network
+    profiles:
+      - test
 
 volumes:
   mariadb_data:
