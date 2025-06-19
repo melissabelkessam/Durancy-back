@@ -4,7 +4,7 @@ services:
     working_dir: /src
     env_file:
       - .env
-    command: /bin/sh -c "npm install nodemailer && npm install && npm audit fix --force && npx nodemon src/app.js"
+    command: /bin/sh -c "apt update && apt install -y curl &&npm install nodemailer && npm install && npm audit fix --force && npx nodemon src/app.js"
     volumes:
       - ./src:/src
     depends_on:
@@ -12,6 +12,11 @@ services:
         condition: service_healthy
     networks:
       - app-network
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://node:3000/kits"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
 
   nginx:
     image: nginx:mainline-alpine
@@ -67,18 +72,40 @@ services:
       PMA_ARBITRARY: 1
     networks:
       - app-network
-  test:
+
+  unit-test:
     image: node:lts-slim
     working_dir: /src
     environment:
       - NODE_ENV=test
-    command: /bin/sh -c "npm install --save-dev jest && npm install && npm run test"
+    command: /bin/sh -c "npm install --save-dev jest && npm install && npm run test:unit"
     volumes:
       - ./src:/src
     networks:
       - app-network
     profiles:
-      - test
+      - unit-test
+
+  integration-test:
+    image: node:lts-slim
+    working_dir: /src
+    environment:
+      - NODE_ENV=test
+      - API_URL=http://node:3000
+      - npm_config_audit_level=moderate
+    command: /bin/sh -c "npm install --save-dev jest supertest --silent && npm install --silent && npm run test:integration"
+    volumes:
+      - ./src:/src
+    depends_on:
+      db:
+        condition: service_healthy
+      node:
+        condition: service_healthy
+    networks:
+      - app-network
+    profiles:
+      - integration-test
+
 
 volumes:
   mariadb_data:

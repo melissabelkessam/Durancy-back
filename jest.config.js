@@ -1,14 +1,17 @@
 module.exports = {
   testEnvironment: 'node',
-  testMatch: [
-    '<rootDir>/src/__tests__/unit/**/*.test.js'
-  ],
+  testTimeout: 30000,
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
   collectCoverageFrom: [
-    'src/models/**/*.js',
-    'src/controllers/**/*.js',
-    'src/utils/**/*.js',
-    '!src/__tests__/**'
+    'models/**/*.js',
+    'controllers/**/*.js',
+    'services/**/*.js',
+    'utils/**/*.js',
+    '!**/__tests__/**'
   ],
-  testTimeout: 10000,
-  verbose: true
+  testMatch: [
+    '**/__tests__/**/*.test.js'
+  ]
 };
+
