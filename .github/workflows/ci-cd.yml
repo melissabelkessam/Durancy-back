@@ -105,7 +105,7 @@ jobs:
           cd ~/Durancy-back
           
           # Wait a bit more for the application to fully start
-          sleep 10
+          sleep 50
           
           # Check container health
           if ! docker compose ps | grep -q "running"; then
