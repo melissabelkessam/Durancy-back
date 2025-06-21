@@ -52,14 +52,14 @@ jobs:
     if: github.ref == 'refs/heads/main'
     
     steps:
-      - name: Debug secrets
-        run: |
-          echo "VPS_HOST exists: ${{ secrets.VPS_HOST != '' }}"
-          echo "VPS_USERNAME exists: ${{ secrets.VPS_USERNAME != '' }}"
-          echo "VPS_SSH_KEY exists: ${{ secrets.VPS_SSH_KEY != '' }}"
-          echo "SSH key first 50 chars: ${VPS_SSH_KEY:0:50}"
-        env:
-          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+    - name: Debug secrets
+      run: |
+        echo "VPS_HOST exists: ${{ secrets.VPS_HOST != '' }}"
+        echo "VPS_USERNAME exists: ${{ secrets.VPS_USERNAME != '' }}"
+        echo "VPS_SSH_KEY exists: ${{ secrets.VPS_SSH_KEY != '' }}"
+        echo "SSH key first 50 chars: ${VPS_SSH_KEY:0:50}"
+      env:
+        VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v1.0.0
       with:
