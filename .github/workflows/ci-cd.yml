@@ -68,11 +68,11 @@ jobs:
             echo "Git pull failed, trying to clone..."
             cd ~
             rm -rf Durancy-back_backup
-            mv Durancy-back Durancy-back_backup 2>/dev/null || true
+            mv Durancy-back Durancy-back_backup 2>/dev/null 
             git clone https://github.com/${{ github.repository }}.git Durancy-back
             cd ~/Durancy-back
             # Restore environment file if it exists
-            cp ~/.env . 2>/dev/null || true
+            cp ~/.env . 2>/dev/null
           }
           
           # Stop current containers gracefully
@@ -102,7 +102,7 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         port: ${{ secrets.VPS_PORT }}
         script: |
-          cd /opt/Durancy
+          cd ~/Durancy-back
           
           # Wait a bit more for the application to fully start
           sleep 10
