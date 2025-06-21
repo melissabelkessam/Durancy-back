@@ -110,11 +110,12 @@ jobs:
           # Check container health
           if ! docker compose ps | grep -q "Up"; then
             echo "Containers are not running properly"
+            docker compose logs
             exit 1
           fi
-          curl -f http://localhost:3000/kits
+          
           # Check application endpoint
-          if ! curl -f http://localhost:3000/kits; then
+          if ! curl -fk https://localhost/kits; then
             echo "Application health check failed"
             docker compose logs node
             exit 1
