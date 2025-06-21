@@ -105,12 +105,11 @@ jobs:
           cd ~/Durancy-back
           
           # Wait a bit more for the application to fully start
-          sleep 10
+          sleep 20
           
           # Check container health
           if ! docker compose ps | grep -q "Up"; then
             echo "Containers are not running properly"
-            docker compose logs
             exit 1
           fi
           curl -f http://localhost:3000/kits
