@@ -61,7 +61,7 @@ jobs:
         port: ${{ secrets.VPS_PORT }}
         script: |
           # Navigate to app directory
-          cd /opt/app
+          cd ~/Durancy-back
           
           # Pull latest code
           git pull origin main || {
