@@ -4,7 +4,7 @@ services:
     working_dir: /src
     env_file:
       - .env
-    command: /bin/sh -c "apt update && apt install -y curl &&npm install nodemailer && npm install && npm audit fix --force && npx nodemon src/app.js"
+    command: /bin/sh -c "apt update && apt install -y curl &&npm install nodemailer && npm install && npm audit fix --force && npm start"
     volumes:
       - ./src:/src
     depends_on:
