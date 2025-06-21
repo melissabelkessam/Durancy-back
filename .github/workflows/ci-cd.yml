@@ -1,0 +1,125 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create test environment file
+      run: |
+        echo "DB_HOST=db" > .env
+        echo "DB_NAME=test_db" >> .env
+        echo "DB_USER=test_user" >> .env
+        echo "DB_PASSWORD=test_password" >> .env
+        echo "NODE_ENV=test" >> .env
+
+    - name: Build and start services
+      run: |
+        docker compose up -d db
+        
+    - name: Wait for database
+      run: |
+        timeout 60 bash -c 'until docker compose exec -T db mysqladmin ping -h localhost -u test_user -ptest_password --silent; do sleep 2; done'
+
+    - name: Start application for tests
+      run: |
+        docker compose up -d node
+
+    - name: Wait for application
+      run: |
+        timeout 60 bash -c 'until docker compose exec -T node curl -f http://localhost:3000/kits; do sleep 2; done'
+
+    - name: Run tests inside container
+      run: |
+        docker compose exec -T node npm test
+
+    - name: Cleanup
+      run: |
+        docker compose down -v
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        port: ${{ secrets.VPS_PORT }}
+        script: |
+          # Navigate to app directory
+          cd /opt/app
+          
+          # Pull latest code
+          git pull origin main || {
+            echo "Git pull failed, trying to clone..."
+            cd /opt
+            rm -rf app_backup
+            mv app app_backup 2>/dev/null || true
+            git clone https://github.com/${{ github.repository }}.git app
+            cd /opt/app
+            # Restore environment file if it exists
+            cp /opt/app_backup/.env . 2>/dev/null || true
+          }
+          
+          # Stop current containers gracefully
+          docker compose down --timeout 30
+          
+          # Pull latest images
+          docker compose pull
+          
+          # Remove unused containers and images
+          docker system prune -f
+          
+          # Start services
+          docker compose up -d
+          
+          # Wait for services to be healthy
+          echo "Waiting for services to start..."
+          sleep 15
+          
+          # Check if containers are running
+          docker compose ps
+
+    - name: Health check
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        port: ${{ secrets.VPS_PORT }}
+        script: |
+          cd /opt/Durancy
+          
+          # Wait a bit more for the application to fully start
+          sleep 10
+          
+          # Check container health
+          if ! docker compose ps | grep -q "running"; then
+            echo "Containers are not running properly"
+            docker compose logs
+            exit 1
+          fi
+          
+          # Check application endpoint
+          if ! curl -f http://localhost:3000/kits; then
+            echo "Application health check failed"
+            docker compose logs node
+            exit 1
+          fi
+          
+          echo "✅ Deployment successful! Application is healthy."
+          docker compose ps
