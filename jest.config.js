@@ -14,4 +14,3 @@ module.exports = {
     '**/__tests__/**/*.test.js'
   ]
 };
-
