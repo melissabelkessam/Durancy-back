@@ -113,9 +113,9 @@ jobs:
             docker compose logs
             exit 1
           fi
-          curl -f http://node:3000/kits
+          curl -f http://localhost:3000/kits
           # Check application endpoint
-          if ! curl -f http://node:3000/kits; then
+          if ! curl -f http://localhost:3000/kits; then
             echo "Application health check failed"
             docker compose logs node
             exit 1
