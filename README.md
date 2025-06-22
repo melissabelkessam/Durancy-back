@@ -10,7 +10,7 @@ cd Durancy-back
 cp .env.sample .env
 docker compose up --build
 ```
-API will be available at https://localost
+API will be available at https://localhost
 
 ## Env vars
 Create a .env file with
@@ -73,3 +73,26 @@ docker compose up
 
 Swagger documentation available at: https://localhost/api-docs
 
+## Tech Stack
+
+- Backend: Node.js, Express.js
+- Database: MariaDB
+- ORM: Sequelize
+- Authentication: JWT
+- File Upload: Multer
+- Email: Nodemailer
+- Testing: Jest, Supertest
+- Documentation: Swagger
+- Container: Docker, Docker Compose
+- Reverse Proxy: Nginx with SSL
+- Security: bcrypt for password hashing
+
+## Production Deployment
+
+The application is configured for production with:
+
+- SSL/TLS termination via Nginx
+- Health checks for all services
+- Persistent data volumes
+- Automatic restart policies
+- Security best practices
