@@ -75,6 +75,8 @@ Swagger documentation available at: https://localhost/api-docs
 
 ## Tech Stack
 
+![API architecture](./api_durancy.png "API architecture")
+
 - Backend: Node.js, Express.js
 - Database: MariaDB
 - ORM: Sequelize
