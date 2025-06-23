@@ -10,7 +10,7 @@ cd Durancy-back
 cp .env.sample .env
 docker compose up --build
 ```
-API will be available at https://localhost
+API will be available at https://api.durancy.fr/
 
 ## Env vars
 Create a .env file with
