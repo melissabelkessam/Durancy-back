@@ -71,7 +71,7 @@ docker compose up
 
 ## API Documentation
 
-Swagger documentation available at: https://localhost/api-docs
+Swagger documentation available at: https://api.durancy.fr/api-docs
 
 ## Tech Stack
 
