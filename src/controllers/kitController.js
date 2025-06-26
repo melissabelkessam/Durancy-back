@@ -5,7 +5,7 @@ class KitController {
   async create(req, res) {
   try {
     const { name, description, price, stock, category } = req.body;
-    const image = req.file ? req.file.path : null; 
+    const image = req.file ? `uploads/kits/${req.file.filename}` : null;
 
     if (!name || !description || !price || !image) {
       return res.status(400).json({ error: "Nom, description, prix et image sont requis." });
