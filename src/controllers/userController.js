@@ -212,7 +212,8 @@ class UserController {
       do {
         tempPassword = Math.random().toString(36).slice(-10);
       } while (!isStrongPassword(tempPassword));
-
+      
+      // Hachage du mot de passe avant l’enregistrement en base avec bcrypt
       const hashed = await bcrypt.hash(tempPassword, 10);
       user.password = hashed;
       await user.save();

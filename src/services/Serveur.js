@@ -21,6 +21,7 @@ class Server {
   }
 
   setupMiddleware() {
+    // Active CORS pour autoriser les requêtes entre le front-end (React) et l’API (Node.js)
     this.app.use(cors({
        origin: ['https://durancy.fr', 'http://localhost:3000'],
       credentials: true
