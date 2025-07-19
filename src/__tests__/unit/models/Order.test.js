@@ -1,4 +1,3 @@
-// Don't import the actual Order model, just test the logic
 describe('Order Model Logic', () => {
   describe('Unit Tests', () => {
     test('should validate order date format', () => {

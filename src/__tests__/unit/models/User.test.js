@@ -1,4 +1,3 @@
-// Don't import the actual User model, just test the logic
 describe('User Model Logic', () => {
   describe('Unit Tests', () => {
     test('should validate username is required and unique', () => {
@@ -20,7 +19,7 @@ describe('User Model Logic', () => {
         return firstname === null || firstname === undefined || 
                (typeof firstname === 'string' && firstname.trim().length > 0);
       };
-
+  
       expect(firstnameValidator('John')).toBe(true);
       expect(firstnameValidator(null)).toBe(true);
       expect(firstnameValidator(undefined)).toBe(true);
