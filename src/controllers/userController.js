@@ -175,7 +175,7 @@ class UserController {
       if (password) {
         if (!isStrongPassword(password)) {
           return res.status(400).json({
-            error: "Le mot de passe doit contenir au minimum 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial."
+            error: "Le mot de passe doit contenir au minimum 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial."
           });
         }
         user.password = await bcrypt.hash(password, 10);

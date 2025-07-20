@@ -21,23 +21,29 @@ class Server {
   }
 
   setupMiddleware() {
-    // Active CORS pour autoriser les requêtes entre le front-end (React) et l’API (Node.js)
+    // Liste des origines autorisées (frontend en ligne et en local)
+    const allowedOrigins = ['https://durancy.fr', 'http://localhost:3000'];
+
     this.app.use(cors({
-       origin: ['https://durancy.fr', 'http://localhost:3000'],
-      credentials: true
+      origin: function (origin, callback) {
+        // Accepter les requêtes sans origine (Postman, etc.)
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('CORS non autorisé depuis cette origine'));
+        }
+      },
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE']
     }));
 
     this.app.use(express.json());
-
-
     this.app.use('/uploads', express.static('uploads'));
 
-    
     this.app.get('/', (req, res) => {
-      res.status(520).send('oopsie meli et dadou');
+      res.status(200).send('oopsie meli et dadou');
     });
 
-   
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   }
 
