@@ -113,9 +113,9 @@ jobs:
             docker compose logs
             exit 1
           fi
-          curl -fk "https://localhost/kits"
+          curl "https://localhost/kits"
           # Check application endpoint
-          if ! curl -fk "https://api.durancy.fr/kits"; then
+          if ! curl "https://api.durancy.fr/kits"; then
             echo "Application health check failed"
             #docker compose logs node
             exit 1
