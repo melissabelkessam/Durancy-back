@@ -120,7 +120,7 @@ class CartController {
   }
 
   // valider le panier → créer une commande
-  async validate(req, res) {
+async validate(req, res) {
     try {
       const user_id = req.user.id;
       const { delivery_fee = 0 } = req.body;
@@ -152,11 +152,24 @@ class CartController {
       });
 
       for (const kit of cart.Kits) {
+        // 1. Créer la ligne dans OrderKit
         await OrderKit.create({
           order_id: order.id,
           kit_id: kit.id,
           quantity: kit.CartKit.quantity
         });
+
+        // 2. Mettre à jour le stock du kit
+        const currentKit = await Kit.findByPk(kit.id);
+        if (currentKit) {
+          if (currentKit.stock < kit.CartKit.quantity) {
+            return res.status(400).json({
+              error: `Stock insuffisant pour le kit : ${currentKit.name}`
+            });
+          }
+          currentKit.stock -= kit.CartKit.quantity;
+          await currentKit.save();
+        }
       }
 
       await CartKit.destroy({ where: { cart_id: cart.id } });
