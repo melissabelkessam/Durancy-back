@@ -115,7 +115,7 @@ jobs:
           fi
           
           # Check application endpoint
-          if ! curl -fk https://localhost/kits; then
+          if ! curl -fk https://api.durancy.fr/kits; then
             echo "Application health check failed"
             docker compose logs node
             exit 1
