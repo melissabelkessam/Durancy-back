@@ -19,3 +19,6 @@ logs/
 # Coverage
 **/coverage/
 src/coverage/
+# Autoriser les dossiers kits et profiles même s'ils sont vides
+!src/uploads/kits/README.txt
+!src/uploads/profiles/README.txt

@@ -41,7 +41,7 @@ class Server {
     this.app.use('/uploads', express.static('uploads'));
 
     this.app.get('/', (req, res) => {
-      res.status(200).send('oopsie meli et dadou');
+      res.status(200).send('oopsie belaid');
     });
 
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
