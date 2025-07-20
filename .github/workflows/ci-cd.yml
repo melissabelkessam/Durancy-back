@@ -93,7 +93,9 @@ jobs:
           
           # Check if containers are running
           docker compose ps
-
+          cd src
+          mkdir -p uploads/kits
+          mkdir -p uploads/profils
     - name: Health check
       uses: appleboy/ssh-action@v1.0.0
       with:
